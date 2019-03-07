@@ -1,0 +1,7 @@
+sudo: false
+language: node_js
+node_js:
+  - v11.10.1
+  - v10
+  - v8
+after_script: 'coveralls < ./coverage/lcov.info'
