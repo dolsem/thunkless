@@ -24,7 +24,7 @@ The simplest (not the most useful) usage example:
 ```js
 // Action
 const confirmIdentity = name => ({
-  promise: Promise.resolve('Valar dohaeris')
+  promise: Promise.resolve('Valar dohaeris'),
   type: CONFIRM_IDENTITY,
   payload: 'Valar morghulis',
   meta: { name },
@@ -62,7 +62,7 @@ const login = (email, password) => ({
   /**
    * If the value of promise is an async function (or a function that returns a promise)
    * and statusSelector is supplied, the promise will only be created if statusSelector
-   * does not return false or thunkless.ActionStatus.BUSY. Otherwise, the action will blocked.
+   * does not return false or thunkless.ActionStatus.BUSY. Otherwise, the action will be blocked.
    */
   promise: () => sendLoginRequest(email, password),
   type: [ // Separate action type for start, success, and failure, is a good common practice.
@@ -75,7 +75,7 @@ const login = (email, password) => ({
   /**
    * Actions in chain will be dispatched if the promise is successfully resolved.
    * If one of them results in error, AUTH_FAILURE will be sent. Otherwise,
-   * thunkless will send AUTH_SUCESS after dispatching chain actions.
+   * thunkless will send AUTH_SUCCESS after dispatching chain actions.
    */
   chain: ({ userData, isReturningUser }) => [
     { type: INIT_USER, payload: userData },
