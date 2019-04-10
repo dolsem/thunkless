@@ -63,17 +63,19 @@ it('calls promiseResolver correctly', () => {
 
   const [actionOneResolverArgs, actionTwoResolverArgs] = resolve.mock.calls;
 
-  expect(actionOneResolverArgs[0]).toEqual(actionOne.promise);
-  expect(actionOneResolverArgs[1]).toEqual(actionOne);
-  expect(actionOneResolverArgs[2]).toEqual(actionOne.type);
+  expect(actionOneResolverArgs[0]).toEqual(next);  
+  expect(actionOneResolverArgs[1]).toEqual(actionOne.promise);
+  expect(actionOneResolverArgs[2]).toEqual(actionOne);
+  expect(actionOneResolverArgs[3]).toEqual(actionOne.type);
 
-  expect(actionTwoResolverArgs[0]).toEqual(actionTwo.promise);
-  expect(actionTwoResolverArgs[1]).toEqual(actionTwo);
-  expect(actionTwoResolverArgs[2]).toEqual(actionTwo.type[1]);
-  expect(actionTwoResolverArgs[3]).toEqual(actionTwo.type[2]);
-  expect(actionTwoResolverArgs[4]).toEqual(actionTwo.chain);
-  expect(actionTwoResolverArgs[5]).toEqual(actionTwo.dispatchOnError);
-  expect(actionTwoResolverArgs[6]).toEqual(extraProps);
+  expect(actionTwoResolverArgs[0]).toEqual(next);
+  expect(actionTwoResolverArgs[1]).toEqual(actionTwo.promise);
+  expect(actionTwoResolverArgs[2]).toEqual(actionTwo);
+  expect(actionTwoResolverArgs[3]).toEqual(actionTwo.type[1]);
+  expect(actionTwoResolverArgs[4]).toEqual(actionTwo.type[2]);
+  expect(actionTwoResolverArgs[5]).toEqual(actionTwo.chain);
+  expect(actionTwoResolverArgs[6]).toEqual(actionTwo.dispatchOnError);
+  expect(actionTwoResolverArgs[7]).toEqual(extraProps);
 });
 
 it('sends start action when necessary', () => {
@@ -173,7 +175,7 @@ it('supports async functions in promise prop', () => {
 
   middleware(action);
   expect(action.promise).toHaveBeenCalled();
-  expect(resolve.mock.calls[0][0]).toEqual(promiseInstance);
+  expect(resolve.mock.calls[0][1]).toEqual(promiseInstance);
 });
 
 it('throws an error if statusSelector is present and type is not an array', () => {
@@ -186,3 +188,39 @@ it('throws an error if statusSelector is present and type is not an array', () =
   expect(() => middleware(action)).toThrowError();
 });
 
+it('supports transform prop', () => {
+  const types = {
+    START: 'PREPARE_DEPARTURE',
+    SUCCESS: 'LEFT_HOME',
+    FAILURE: 'OVERSLEPT... OH NO',
+  };
+
+  const leaveForWork = {
+    type: [types.START, types.SUCCESS, types.FAILURE],
+    promise: Promise.resolve(),
+    transform: (action, state) => {
+      switch (action.type) {
+        case types.START:
+          return { ...action, meta: { takeUmbrella: state.weather === 'rain' } }
+        case types.SUCCESS:
+          return { ...action, meta: { useDifferentRoute: !!state.congestion } }
+        default:
+          return action;
+      }
+    },
+  };
+
+  store.getState.mockReturnValueOnce({ weather: 'rain' });
+  store.getState.mockReturnValueOnce({ congestion: true });
+
+  middleware(leaveForWork);
+  expect(next).toHaveBeenCalledTimes(1);
+  expect(next.mock.calls[0][0]).toHaveProperty('type', types.START);
+  expect(next.mock.calls[0][0]).toHaveProperty('meta.takeUmbrella', true);
+  expect(resolve.mock.calls[0][0]).toBeInstanceOf(Function);
+
+  resolve.mock.calls[0][0]({ type: types.SUCCESS });
+  expect(next).toHaveBeenCalledTimes(2);
+  expect(next.mock.calls[1][0]).toHaveProperty('type', types.SUCCESS);
+  expect(next.mock.calls[1][0]).toHaveProperty('meta.useDifferentRoute', true);
+});

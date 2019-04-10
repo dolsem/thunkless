@@ -17,6 +17,7 @@ const createMiddleware = (store, next, resolve) => (action) => {
     statusSelector,
     chain,
     dispatchOnError,
+    transform,
 
     // anything else (should only include meta for FSA-compliancy)
     ...extra
@@ -45,11 +46,16 @@ const createMiddleware = (store, next, resolve) => (action) => {
     }
   }
 
+  // If action.transform function is set, apply it before passing action to next.
+  const _next = typeof transform === 'function'
+    ? action => next(transform(action, store.getState()))
+    : next;
+
   let successType;
   let failureType;
 
   if (type instanceof Array) {
-    next({ type: type[0], payload, ...extra }); // Dispatch start action
+    _next({ type: type[0], payload, ...extra }); // Dispatch start action
     successType = type[1];
     failureType = type[2];
   } else {
@@ -59,7 +65,7 @@ const createMiddleware = (store, next, resolve) => (action) => {
   // At this point, start action has been reduced and status has been updated if necessary
   const _promise = typeof promise === 'function' ? promise() : promise;
 
-  return resolve(_promise, action, successType, failureType, chain, dispatchOnError, extra);
+  return resolve(_next, _promise, action, successType, failureType, chain, dispatchOnError, extra);
 }
 
-export default store => next => createMiddleware(store, next, createPromiseResolver(store, next));
+export default store => next => createMiddleware(store, next, createPromiseResolver(store));

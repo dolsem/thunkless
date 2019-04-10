@@ -41,8 +41,8 @@ const createErrorHandler = (store, next, failureType, dispatchOnError, action, e
     }
   }
 
-export default (store, next) => 
-  (promise, action, successType, failureType, chain, dispatchOnError, extra) =>
+export default store => 
+  (next, promise, action, successType, failureType, chain, dispatchOnError, extra) =>
     promise
       .then(payload => prepareChain(chain, payload))
       .then(createDispatcher(store, next, extra, successType))
