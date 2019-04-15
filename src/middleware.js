@@ -4,7 +4,10 @@ import createPromiseResolver from './promiseResolver';
 const HOP = Object.prototype.hasOwnProperty;
 
 const createMiddleware = (store, next, resolve) => (action) => {
-  if (!HOP.call(action, 'promise')) return next(action);
+  if (!HOP.call(action, 'promise')) {
+    if (!HOP.call(action, 'transform')) return next(action);
+    return next(action.transform(action, store.getState()));
+  }
 
   const {
     // FSA props

@@ -23,7 +23,7 @@ afterEach(() => {
   store.getState.mockClear();
 });
 
-it('ignores error actions or actions without promise prop', () => {
+it('ignores error actions or actions without promise and transform props', () => {
   const action1 = { type: 'SOME_ACTION_TYPE', payload: 'some payload' };
   const action2 = {
     type: 'SOME_ACTION_TYPE',
@@ -223,4 +223,27 @@ it('supports transform prop', () => {
   expect(next).toHaveBeenCalledTimes(2);
   expect(next.mock.calls[1][0]).toHaveProperty('type', types.SUCCESS);
   expect(next.mock.calls[1][0]).toHaveProperty('meta.useDifferentRoute', true);
+});
+
+it('handles actions with transform prop but without promise', () => {
+  const action = {
+    type: 'TAKE_ITEMS',
+    payload: ['Backpack'],
+    transform: (action, state) => (state.isSunny
+      ? { ...action, payload: action.payload.concat('Sunglasses') }
+      : action
+    ),
+  }
+
+  store.getState.mockReturnValueOnce({ isSunny: true });
+  middleware(action);
+  expect(next).toHaveBeenCalledTimes(1);
+  expect(resolve).not.toHaveBeenCalled();
+  expect(next.mock.calls[0][0]).toHaveProperty('payload.1', 'Sunglasses');
+
+  store.getState.mockReturnValueOnce({ isSunny: false });
+  middleware(action);
+  expect(next).toHaveBeenCalledTimes(2);
+  expect(resolve).not.toHaveBeenCalled();
+  expect(next.mock.calls[1][0]).not.toHaveProperty('payload.1');
 });
