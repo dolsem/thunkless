@@ -4,4 +4,20 @@ node_js:
   - node
   - v10
   - v8
+
 after_script: 'coveralls < ./coverage/lcov.info'
+
+jobs:
+  include:
+    - stage: npm release
+      if: tag IS present
+      node_js: v8
+      before_deploy:
+        - npm run build
+      deploy:
+        provider: npm
+        email: "$NPM_EMAIL"
+        api_key: "$NPM_TOKEN"
+        skip_cleanup: true
+        on:
+          tags: true
