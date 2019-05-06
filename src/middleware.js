@@ -5,7 +5,7 @@ const HOP = Object.prototype.hasOwnProperty;
 
 const createMiddleware = (store, next, resolve) => (action) => {
   if (!HOP.call(action, 'promise')) {
-    if (!HOP.call(action, 'transform')) return next(action);
+    if (typeof action.transform !== 'function') return next(action);
     return next(action.transform(action, store.getState()));
   }
 
