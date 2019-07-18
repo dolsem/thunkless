@@ -15,7 +15,7 @@ const createDispatcher = (store, next, extra, type) =>
       }
     }
 
-    next({ ...extra, payload, type });
+    return next({ ...extra, payload, type });
   }
 
 const createErrorHandler = (store, next, failureType, dispatchOnError, action, extra) =>
@@ -25,7 +25,7 @@ const createErrorHandler = (store, next, failureType, dispatchOnError, action, e
       origin: action,
     };
 
-    next({ ...extra, type: failureType, error: true, payload });
+    const nextval = next({ ...extra, type: failureType, error: true, payload });
 
     if (dispatchOnError) {
       if (typeof dispatchOnError === 'string') {
@@ -39,6 +39,8 @@ const createErrorHandler = (store, next, failureType, dispatchOnError, action, e
         if (errorAction) store.dispatch(errorAction);
       }
     }
+
+    return nextval;
   }
 
 export default store => 
