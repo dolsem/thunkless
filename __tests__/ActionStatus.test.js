@@ -1,4 +1,4 @@
-let ActionStatus = require('../src/ActionStatus').default;
+let { ActionStatus } = require('../src').default;
 
 it('is defined', () => {
   expect(ActionStatus).toBeDefined();
@@ -27,7 +27,7 @@ describe('serializes / deserializes', () => {
     Object.defineProperty(Symbol.prototype, 'description', {
       get: function() { return this.toString().slice(7, -1) }
     });
-    ActionStatus = require('../src/ActionStatus').default;
+    ActionStatus = require('../src').default.ActionStatus;
 
     expect(ActionStatus.fromString(ActionStatus.toString(ActionStatus.SUCCESS)))
       .toEqual(ActionStatus.SUCCESS);

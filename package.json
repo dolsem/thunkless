@@ -5,6 +5,7 @@
   "main": "dist/thunkless.cjs.js",
   "module": "dist/thunkless.esm.js",
   "browser": "dist/thunkless.umd.js",
+  "types": "dist/thunkless.d.ts",
   "repository": "https://github.com/dolsem/thunkless",
   "bugs": {
     "url": "https://github.com/dolsem/thunkless/issues"
@@ -20,18 +21,21 @@
     "redux-thunk"
   ],
   "devDependencies": {
-    "@babel/core": "^7.2.2",
-    "@babel/preset-env": "^7.2.3",
-    "babel-jest": "^24.3.1",
-    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
+    "@types/jest": "^26.0.4",
     "coveralls": "^3.0.2",
-    "jest": "^24.1.0",
-    "jest-cli": "^24.1.0",
-    "rollup": "^1.0.0",
-    "rollup-plugin-babel": "^4.2.0"
+    "jest": "^26.1.0",
+    "jest-cli": "^26.1.0",
+    "rimraf": "^2.6.2",
+    "rollup": "^2.21.0",
+    "rollup-plugin-typescript2": "0.27.1",
+    "ts-jest": "^26.1.1",
+    "tslib": "^2.0.0",
+    "typescript": "^3.9.6"
   },
   "scripts": {
-    "build": "rollup -c",
+    "prebuild": "rimraf dist",
+    "build": "rollup -c && npm run build:tsc",
+    "build:tsc": "tsc -d --out dist/thunkless.js --declarationMap --emitDeclarationOnly",
     "test": "node_modules/jest-cli/bin/jest.js --verbose",
     "test:update": "node_modules/jest-cli/bin/jest.js --verbose --updateSnapshot",
     "coverage": "node_modules/jest-cli/bin/jest.js --verbose && open ./coverage/lcov-report/index.html"
@@ -41,13 +45,18 @@
   ],
   "jest": {
     "notify": false,
-    "collectCoverage": true,
     "transform": {
-      "^.+\\.(js|jsx|ts)$": "babel-jest"
+      ".ts": "ts-jest"
     },
+    "testEnvironment": "node",
+    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|js)$",
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "collectCoverage": true,
     "collectCoverageFrom": [
-      "src/**/*.js",
-      "!__tests__"
+      "src/*.{js,ts}"
     ]
   }
 }
