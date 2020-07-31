@@ -1,28 +1,30 @@
-import ActionStatus from './ActionStatus';
-import createPromiseResolver from './promiseResolver';
+import type { MiddlewareAPI, Dispatch, AnyAction } from 'redux';
+
+import type { ThunklessAction } from './thunkless-action.interface';
+import { ActionStatus } from './action-status.enum';
+import { createPromiseResolver } from './promise-resolver';
 
 const HOP = Object.prototype.hasOwnProperty;
 
-const createMiddleware = (store, next, resolve) => (action) => {
+const createMiddleware = (
+  store: MiddlewareAPI,
+  next: Dispatch<AnyAction>,
+  resolve: ReturnType<typeof createPromiseResolver>
+) => (action: ThunklessAction<any>) => {
   if (!HOP.call(action, 'promise')) {
     if (typeof action.transform !== 'function') return next(action);
     return next(action.transform(action, store.getState()));
   }
 
   const {
-    // FSA props
     type,
     error,
     payload,
-
-    // thunkless props
     promise,
     statusSelector,
     chain,
     dispatchOnError,
     transform,
-
-    // anything else (should only include meta for FSA-compliancy)
     ...extra
   } = action;
 
@@ -51,11 +53,11 @@ const createMiddleware = (store, next, resolve) => (action) => {
 
   // If action.transform function is set, apply it before passing action to next.
   const _next = typeof transform === 'function'
-    ? action => next(transform(action, store.getState()))
+    ? ((action: ThunklessAction<any>) => next(transform(action, store.getState()))) as Dispatch<AnyAction>
     : next;
 
-  let successType;
-  let failureType;
+  let successType: string;
+  let failureType: string;
 
   if (type instanceof Array) {
     _next({ type: type[0], payload, ...extra }); // Dispatch start action
@@ -71,4 +73,5 @@ const createMiddleware = (store, next, resolve) => (action) => {
   return resolve(_next, _promise, action, successType, failureType, chain, dispatchOnError, extra);
 }
 
-export default store => next => createMiddleware(store, next, createPromiseResolver(store));
+export const middleware = (store: MiddlewareAPI) => (next: Dispatch<AnyAction>) =>
+  createMiddleware(store, next, createPromiseResolver(store));

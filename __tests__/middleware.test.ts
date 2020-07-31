@@ -4,13 +4,17 @@ const next = jest.fn();
 const resolve = jest.fn();
 
 // Dependencies
-jest.doMock('../src/promiseResolver', () => jest.fn(() => resolve));
-jest.doMock('../src/ActionStatus', () => ({
-  BUSY: Symbol(), SUCCESS: Symbol(), FAILURE: Symbol(),
+jest.doMock('../src/promise-resolver', () => ({
+  createPromiseResolver: jest.fn(() => resolve),
+}));
+jest.doMock('../src/action-status.enum', () => ({
+  ActionStatus: {
+    BUSY: 'busy', SUCCESS: 'success', FAILURE: 'failure',
+  },
 }));
 
-const ActionStatus = require('../src/ActionStatus');
-const createMiddleware = require('../src/middleware').default;
+import { ActionStatus } from '../src/action-status.enum';
+import { middleware as createMiddleware } from '../src/middleware';
 
 // Middleware initialization
 const middleware = createMiddleware(store)(next);
@@ -51,8 +55,8 @@ it('calls promiseResolver correctly', () => {
   const actionTwo = {
     type: ['START_TYPE', 'SUCCESS_TYPE', 'FAILURE_TYPE'],
     promise: Promise.resolve(),
-    chain: Symbol(),
-    dispatchOnError: Symbol(),
+    chain: () => [],
+    dispatchOnError: () => ({ type: 'ERROR_TYPE' }),
     ...extraProps,
   }
 
@@ -82,20 +86,20 @@ it('sends start action when necessary', () => {
   const actionOne = {
     type: 'SOME_TYPE',
     promise: Promise.resolve(),
-    payload: Symbol(),
-    meta: Symbol(),
-    otherProp: Symbol(),
-    chain: Symbol(),
+    payload: {},
+    meta: {},
+    otherProp: 'value',
+    chain: () => [],
   };
   const actionTwo = {
     type: ['START_TYPE', 'SUCCESS_TYPE', 'FAILURE_TYPE'],
     promise: Promise.resolve(),
-    payload: Symbol(),
+    payload: {},
     statusSelector: null,
     dispatchOnError: null,
-    chain: Symbol(),
-    meta: Symbol(),
-    otherProp: Symbol(),
+    chain: () => [],
+    meta: {},
+    otherProp: 'value',
   }
 
   middleware(actionOne);

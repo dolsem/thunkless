@@ -1,4 +1,5 @@
-import thunkless from './middleware';
-import ActionStatus from './ActionStatus';
-
-export default Object.assign(thunkless, { ActionStatus });
+export { middleware } from './middleware';
+export { ActionStatus } from './action-status.enum';
+export { ChainedValue, ThunklessChain, ErrorPayload } from './promise-resolver';
+export { StatusSelector } from './status-selector.interface';
+export { ThunklessAction } from './thunkless-action.interface';
