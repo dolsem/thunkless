@@ -163,12 +163,12 @@ Use [`applyMiddleware()`](https://redux.js.org/api-reference/applymiddleware) to
 
 ```js
 import { createStore, applyMiddleware } from 'redux';
-import thunkless from 'thunkless';
+import { middleware } from 'thunkless';
 import rootReducer from './reducers/index';
 
 const store = createStore(
   rootReducer,
-  applyMiddleware(thunkless)
+  applyMiddleware(middleware)
 );
 ```
 
