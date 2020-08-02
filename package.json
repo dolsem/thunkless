@@ -1,6 +1,6 @@
 {
   "name": "thunkless",
-  "version": "1.0.0-beta.1",
+  "version": "1.0.0-beta.2",
   "description": "Thunkless middleware for Redux",
   "main": "dist/thunkless.cjs.js",
   "module": "dist/thunkless.esm.js",
