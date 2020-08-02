@@ -1,6 +1,6 @@
-import { createPromiseResolver } from '../src/promise-resolver';
+import type { Dispatch, AnyAction } from 'redux';
 import type { ThunklessAction } from '../src/thunkless-action.interface';
-import { Dispatch, AnyAction } from 'redux';
+import { createPromiseResolver } from '../src/promise-resolver';
 
 const store = { dispatch: jest.fn(), getState: jest.fn() };
 const mockValue = Symbol();

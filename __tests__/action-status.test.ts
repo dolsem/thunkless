@@ -1,4 +1,4 @@
-import { ActionStatus } from '../src';
+import { ActionStatus } from '../src/action-status.enum';
 
 it('is defined', () => {
   expect(ActionStatus).toBeDefined();
