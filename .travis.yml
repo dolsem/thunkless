@@ -2,8 +2,8 @@ sudo: false
 language: node_js
 node_js:
   - node
+  - v12
   - v10
-  - v8
 
 after_script: 'coveralls < ./coverage/lcov.info'
 
@@ -11,7 +11,7 @@ jobs:
   include:
     - stage: npm release
       if: tag IS present
-      node_js: v8
+      node_js: v10
       before_deploy:
         - npm run build
       deploy:
