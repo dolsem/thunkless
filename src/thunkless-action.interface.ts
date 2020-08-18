@@ -6,6 +6,7 @@ export interface ThunklessAction<
   P = never,
   S = any,
   T extends readonly [string, string, string]|string = readonly [string, string, string]|string,
+  R extends AnyAction = AnyAction,
 > {
   // FSA props
   type: T;
@@ -18,7 +19,7 @@ export interface ThunklessAction<
   statusSelector?: P extends never ? never : StatusSelector|StatusSelector[];
   chain?: P extends never ? never : ThunklessChain<P>;
   dispatchOnError?: P extends never ? never : string|((payload: ErrorPayload) => AnyAction|null|void);
-  transform?: (action: this, store: S) => AnyAction;
+  transform?: (action: this, store: S) => R;
 
   // other props
   [K: string]: any;

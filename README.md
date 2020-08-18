@@ -172,7 +172,7 @@ const store = createStore(
 );
 ```
 
-## createThunklessAction
+## TypeScript
 `createThunklessAction` is just an identity function that helps to strongly type action objects in TypeScript.
 ```ts
 import { createThunklessAction } from 'thunkless';
@@ -193,6 +193,22 @@ const login = (email, password) => createThunklessAction({
     isReturningUser && { type: SHOW_MESSAGE, payload: 'Welcome back!' },
   ],
 });
+```
+
+`ReducibleThunklessAction` type helper can be used to resolve action type properly in the reducer. Example usage:
+```ts
+import type { ReducibleThunklessAction } from 'thunkless';
+import type { login, signup } from '../actions/auth';
+
+const authReducer = (state, action: ReducibleThunklessAction<typeof login>|ReducibleThunklessAction<typeof signup>) => {
+  switch (action.type) {
+    case AUTH_SUCCESS: return {
+      ...state,
+      // username type will be inferred correctly
+      username: action.payload.userData.username,
+    }
+  }
+}
 ```
 
 ## License
