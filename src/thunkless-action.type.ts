@@ -1,8 +1,7 @@
 import type { AnyAction } from 'redux';
 import type { StatusSelector } from './status-selector.interface';
 import type { ThunklessChain, ErrorPayload } from './promise-resolver';
-
-export interface ThunklessAction<
+export interface ThunklessActionProps<
   P = never,
   S = any,
   T extends readonly [string, string, string]|string = readonly [string, string, string]|string,
@@ -20,7 +19,15 @@ export interface ThunklessAction<
   chain?: P extends never ? never : ThunklessChain<P>;
   dispatchOnError?: P extends never ? never : string|((payload: ErrorPayload) => AnyAction|null|void);
   transform?: (action: this, store: S) => R;
+}
 
+export type ThunklessAction<
+  P = never,
+  S = any,
+  T extends readonly [string, string, string]|string = readonly [string, string, string]|string,
+  R extends AnyAction = AnyAction,
+  O extends Record<string, any> = {},
+> = ThunklessActionProps<P, S, T, R>&{
   // other props
-  [K: string]: any;
+  [K in keyof O]: O[K];
 }

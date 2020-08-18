@@ -1,5 +1,5 @@
 import type { MiddlewareAPI, Dispatch, AnyAction } from 'redux';
-import type { ThunklessAction } from './thunkless-action.interface';
+import type { ThunklessAction } from './thunkless-action.type';
 
 export type ChainedValue = AnyAction|AnyAction[]|void;
 export type ThunklessChain<T = any> =

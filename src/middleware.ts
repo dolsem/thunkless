@@ -1,6 +1,6 @@
 import type { MiddlewareAPI, Dispatch, AnyAction } from 'redux';
 
-import type { ThunklessAction } from './thunkless-action.interface';
+import type { ThunklessAction } from './thunkless-action.type';
 import { ActionStatus } from './action-status.enum';
 import { createPromiseResolver } from './promise-resolver';
 
