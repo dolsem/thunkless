@@ -2,18 +2,22 @@ import type { AnyAction } from 'redux';
 import type { StatusSelector } from './status-selector.interface';
 import type { ThunklessChain, ErrorPayload } from './promise-resolver';
 
-export interface ThunklessAction<T = never, S = any> {
+export interface ThunklessAction<
+  P = never,
+  S = any,
+  T extends readonly [string, string, string]|string = readonly [string, string, string]|string,
+> {
   // FSA props
-  type: string[]|string;
+  type: T;
   error?: boolean;
   payload?: any;
   meta?: any;
 
   // thunkless props
-  promise?: T extends never ? never : Promise<T>|(() => Promise<T>);
-  statusSelector?: T extends never ? never : StatusSelector|StatusSelector[];
-  chain?: T extends never ? never : ThunklessChain<T>;
-  dispatchOnError?: T extends never ? never : string|((payload: ErrorPayload) => AnyAction|null|void);
+  promise?: P extends never ? never : Promise<P>|(() => Promise<P>);
+  statusSelector?: P extends never ? never : StatusSelector|StatusSelector[];
+  chain?: P extends never ? never : ThunklessChain<P>;
+  dispatchOnError?: P extends never ? never : string|((payload: ErrorPayload) => AnyAction|null|void);
   transform?: (action: this, store: S) => AnyAction;
 
   // other props

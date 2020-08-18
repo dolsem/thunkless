@@ -53,7 +53,7 @@ it('calls promiseResolver correctly', () => {
   };
   const extraProps = { a: 1, b: 2, c: 3 };
   const actionTwo = {
-    type: ['START_TYPE', 'SUCCESS_TYPE', 'FAILURE_TYPE'],
+    type: ['START_TYPE', 'SUCCESS_TYPE', 'FAILURE_TYPE'] as const,
     promise: Promise.resolve(),
     chain: () => [],
     dispatchOnError: () => ({ type: 'ERROR_TYPE' }),
@@ -92,7 +92,7 @@ it('sends start action when necessary', () => {
     chain: () => [],
   };
   const actionTwo = {
-    type: ['START_TYPE', 'SUCCESS_TYPE', 'FAILURE_TYPE'],
+    type: ['START_TYPE', 'SUCCESS_TYPE', 'FAILURE_TYPE'] as const,
     promise: Promise.resolve(),
     payload: {},
     statusSelector: null,
@@ -119,17 +119,17 @@ it('sends start action when necessary', () => {
 
 it('supports blocking actions', () => {
   const actionOne = {
-    type: ['START_TYPE', 'SUCCESS_TYPE', 'FAILURE_TYPE'],
+    type: ['START_TYPE', 'SUCCESS_TYPE', 'FAILURE_TYPE'] as const,
     promise: Promise.resolve(),
     statusSelector: state => state.substate.status,
   };
   const actionTwo = {
-    type: ['OTHER_START_TYPE', 'OTHER_SUCCESS_TYPE', 'OTHER_FAILURE_TYPE'],
+    type: ['OTHER_START_TYPE', 'OTHER_SUCCESS_TYPE', 'OTHER_FAILURE_TYPE'] as const,
     promise: Promise.resolve(),
     statusSelector: ({ substate: { status } }) => (status !== ActionStatus.BUSY && status !== ActionStatus.FAILURE),
   }
   const actionThree = {
-    type: ['DIFFERENT_START_TYPE', 'DIFFERENT_SUCCESS_TYPE', 'DIFFERENT_FAILURE_TYPE'],
+    type: ['DIFFERENT_START_TYPE', 'DIFFERENT_SUCCESS_TYPE', 'DIFFERENT_FAILURE_TYPE'] as const,
     promise: Promise.resolve(),
     statusSelector: [state => state.status, state => state.otherStatus],
   }
@@ -200,7 +200,7 @@ it('supports transform prop', () => {
   };
 
   const leaveForWork = {
-    type: [types.START, types.SUCCESS, types.FAILURE],
+    type: [types.START, types.SUCCESS, types.FAILURE] as const,
     promise: Promise.resolve(),
     transform: (action, state) => {
       switch (action.type) {

@@ -64,7 +64,7 @@ const createMiddleware = (
     successType = type[1];
     failureType = type[2];
   } else {
-    successType = failureType = type;
+    successType = failureType = type as string;
   }
 
   // At this point, start action has been reduced and status has been updated if necessary

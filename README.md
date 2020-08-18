@@ -172,6 +172,28 @@ const store = createStore(
 );
 ```
 
+## createThunklessAction
+`createThunklessAction` is just an identity function that helps to strongly type action objects in TypeScript.
+```ts
+import { createThunklessAction } from 'thunkless';
+
+const login = (email, password) => createThunklessAction({
+  promise: sendLoginRequest(email, password),
+  type: [
+    LOGIN_REQUEST,
+    LOGIN_SUCCESS,
+    LOGIN_FAILURE,
+  ] as const,
+  /**
+   * Chain function parameter type will be inferred
+   * from the promise result type.
+   */
+  chain: ({ userData, isReturningUser }) => [
+    { type: INIT_USER, payload: userData },
+    isReturningUser && { type: SHOW_MESSAGE, payload: 'Welcome back!' },
+  ],
+});
+```
 
 ## License
 
