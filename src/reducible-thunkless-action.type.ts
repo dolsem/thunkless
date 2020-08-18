@@ -24,7 +24,7 @@ type SuccessPayload<T extends ThunklessAction<any>> =
   T['promise'] extends (...args: any[]) => Promise<infer R> ? R :
   never;
 
-export type ReducibleThunklessAction<T extends ThunklessAction<any>> = T['type'] extends [string, string, string]
+export type ReducibleThunklessAction<T extends ThunklessAction<any>> = T['type'] extends readonly [string, string, string]
   ? (
     |TransformedAction<{ type: T['type'][0], payload?: T['payload'] }&{ [K in keyof OtherActionProps<T>]: T[K] }, T['transform']>
     |TransformedAction<{ type: T['type'][1], payload: ErrorPayload, error: true }&{ [K in keyof OtherActionProps<T>]: T[K] }, T['transform']>
