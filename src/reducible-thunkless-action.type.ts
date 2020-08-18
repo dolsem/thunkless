@@ -27,7 +27,7 @@ type SuccessPayload<T extends ThunklessAction<any>> =
 export type ReducibleThunklessAction<T extends ThunklessAction<any>> = T['type'] extends readonly [string, string, string]
   ? (
     |TransformedAction<{ type: T['type'][0], payload?: T['payload'] }&{ [K in keyof OtherActionProps<T>]: T[K] }, T['transform']>
-    |TransformedAction<{ type: T['type'][1], payload: ErrorPayload, error: true }&{ [K in keyof OtherActionProps<T>]: T[K] }, T['transform']>
-    |TransformedAction<{ type: T['type'][2], payload: SuccessPayload<T> }&{ [K in keyof OtherActionProps<T>]: T[K] }, T['transform']>
+    |TransformedAction<{ type: T['type'][1], payload: SuccessPayload<T> }&{ [K in keyof OtherActionProps<T>]: T[K] }, T['transform']>
+    |TransformedAction<{ type: T['type'][2], payload: ErrorPayload, error: true }&{ [K in keyof OtherActionProps<T>]: T[K] }, T['transform']>
   )
   : T;
