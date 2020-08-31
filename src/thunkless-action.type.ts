@@ -3,6 +3,7 @@ import type { StatusSelector } from './status-selector.interface';
 import type { ThunklessChain, ErrorPayload } from './promise-resolver';
 export interface ThunklessActionProps<
   P = never,
+  M = never,
   S = any,
   T extends readonly [string, string, string]|string = readonly [string, string, string]|string,
   R extends AnyAction = AnyAction,
@@ -11,7 +12,7 @@ export interface ThunklessActionProps<
   type: T;
   error?: boolean;
   payload?: any;
-  meta?: any;
+  meta?: M;
 
   // thunkless props
   promise?: P extends never ? never : Promise<P>|(() => Promise<P>);
@@ -23,11 +24,12 @@ export interface ThunklessActionProps<
 
 export type ThunklessAction<
   P = never,
+  M = never,
   S = any,
   T extends readonly [string, string, string]|string = readonly [string, string, string]|string,
   R extends AnyAction = AnyAction,
   O extends Record<string, any> = {},
-> = ThunklessActionProps<P, S, T, R>&{
+> = ThunklessActionProps<P, M, S, T, R>&{
   // other props
   [K in keyof O]: O[K];
 }

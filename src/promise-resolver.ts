@@ -8,7 +8,7 @@ export type ThunklessChain<T = any> =
   |((payload: T) => ChainedValue)
   |((payload: T) => Promise<ChainedValue>)
 
-export type ErrorPayload = { error: Error, origin: ThunklessAction<any> }
+export type ErrorPayload = { error: Error, origin: ThunklessAction<any, any> }
 
 const prepareChain = (chain: ThunklessChain) => typeof chain === 'function'
   ? async (payload: any): Promise<[any, ChainedValue]> => [payload, await chain(payload)]
@@ -37,8 +37,8 @@ const createErrorHandler = (
   store: MiddlewareAPI,
   next: Dispatch<AnyAction>,
   failureType: string,
-  dispatchOnError: ThunklessAction<any>['dispatchOnError'],
-  action: ThunklessAction<any>,
+  dispatchOnError: ThunklessAction<any, any>['dispatchOnError'],
+  action: ThunklessAction<any, any>,
   extra: Record<string, any>
 ) => (error: Error) => {
   const payload: ErrorPayload = {
@@ -67,11 +67,11 @@ const createErrorHandler = (
 export const createPromiseResolver = (store: MiddlewareAPI) => (
   next: Dispatch<AnyAction>,
   promise: Promise<unknown>,
-  action: ThunklessAction<any>,
+  action: ThunklessAction<any, any>,
   successType: string,
   failureType: string,
   chain: ThunklessChain,
-  dispatchOnError: ThunklessAction<any>['dispatchOnError'],
+  dispatchOnError: ThunklessAction<any, any>['dispatchOnError'],
   extra: Record<string, any>,
 ) => promise
   .then(prepareChain(chain))

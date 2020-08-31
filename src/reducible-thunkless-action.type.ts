@@ -1,7 +1,7 @@
 import type { ThunklessAction } from './thunkless-action.type';
 import type { ErrorPayload } from './promise-resolver';
 
-type TransformedAction<A extends ThunklessAction<any>, T> = T extends ThunklessAction['transform'] ? ReturnType<T> : A; 
+type TransformedAction<A extends ThunklessAction<any, any>, T> = T extends ThunklessAction['transform'] ? ReturnType<T> : A; 
 
 type NeverProps = {
   promise?: never;
@@ -11,9 +11,12 @@ type NeverProps = {
   transform?: never;
 };
 
-type OtherActionProps<T extends ThunklessAction<any>> = Omit<T,
+type MetaProp<T extends ThunklessAction<any, any>> = T['meta'] extends never ? {} : { meta: T['meta'] };
+
+type OtherActionProps<T extends ThunklessAction<any, any>> = Omit<T,
   |'type'
   |'payload'
+  |'meta'
   |'promise'
   |'statusSelector'
   |'chain'
@@ -21,16 +24,16 @@ type OtherActionProps<T extends ThunklessAction<any>> = Omit<T,
   |'transform'
 >;
 
-type SuccessPayload<T extends ThunklessAction<any>> =
+type SuccessPayload<T extends ThunklessAction<any, any>> =
   T['promise'] extends Promise<infer R> ? R :
   T['promise'] extends (...args: any[]) => Promise<infer R> ? R :
   T['promise'] extends Promise<infer R>|((...args: any[]) => Promise<infer R>) ? R :
   never;
 
-export type ReducibleThunklessAction<T extends ThunklessAction<any>> = T['type'] extends readonly [string, string, string]
+export type ReducibleThunklessAction<T extends ThunklessAction<any, any>> = T['type'] extends readonly [string, string, string]
   ? (
-    |TransformedAction<{ type: T['type'][0], payload?: T['payload'] }&NeverProps&{ [K in keyof OtherActionProps<T>]: T[K] }, T['transform']>
-    |TransformedAction<{ type: T['type'][1], payload: SuccessPayload<T> }&NeverProps&{ [K in keyof OtherActionProps<T>]: T[K] }, T['transform']>
-    |TransformedAction<{ type: T['type'][2], payload: ErrorPayload, error: true }&NeverProps&{ [K in keyof OtherActionProps<T>]: T[K] }, T['transform']>
+    |TransformedAction<{ type: T['type'][0], payload?: T['payload'] }&MetaProp<T>&NeverProps&{ [K in keyof OtherActionProps<T>]: T[K] }, T['transform']>
+    |TransformedAction<{ type: T['type'][1], payload: SuccessPayload<T> }&MetaProp<T>&NeverProps&{ [K in keyof OtherActionProps<T>]: T[K] }, T['transform']>
+    |TransformedAction<{ type: T['type'][2], payload: ErrorPayload, error: true }&MetaProp<T>&NeverProps&{ [K in keyof OtherActionProps<T>]: T[K] }, T['transform']>
   )
   : T;

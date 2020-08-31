@@ -10,7 +10,7 @@ const createMiddleware = (
   store: MiddlewareAPI,
   next: Dispatch<AnyAction>,
   resolve: ReturnType<typeof createPromiseResolver>
-) => (action: ThunklessAction<any>) => {
+) => (action: ThunklessAction<any, any>) => {
   if (!HOP.call(action, 'promise')) {
     if (typeof action.transform !== 'function') return next(action);
     return next(action.transform(action, store.getState()));
@@ -53,7 +53,7 @@ const createMiddleware = (
 
   // If action.transform function is set, apply it before passing action to next.
   const _next = typeof transform === 'function'
-    ? ((action: ThunklessAction<any>) => next(transform(action, store.getState()))) as Dispatch<AnyAction>
+    ? ((action: ThunklessAction<any, any>) => next(transform(action, store.getState()))) as Dispatch<AnyAction>
     : next;
 
   let successType: string;
